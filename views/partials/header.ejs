@@ -1,0 +1,33 @@
+<header class="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-rose-bg/40 transition-all duration-300">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-6 h-20">
+    <a href="/" class="text-2xl font-bold text-rose-primary font-serif tracking-widest uppercase flex items-baseline gap-2 hover:opacity-85 transition-opacity">
+      Aura Flora
+      <span class="text-[10px] font-normal not-italic text-text-muted font-sans tracking-widest uppercase hidden sm:inline">花漾生活</span>
+    </a>
+
+    <nav class="flex items-center gap-8 text-xs font-semibold tracking-widest uppercase text-text-secondary">
+      <a href="/" class="hover:text-rose-primary transition-colors relative py-2 group">
+        商品列表
+        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-primary transition-all group-hover:w-full"></span>
+      </a>
+      <a href="/cart" class="hover:text-rose-primary transition-colors relative py-2 group">
+        購物車
+        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-primary transition-all group-hover:w-full"></span>
+        <span
+          id="cart-badge"
+          class="absolute -top-1 -right-4 bg-rose-primary text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center scale-90 rounded-none"
+          style="display: none;"
+        ></span>
+      </a>
+      <a id="orders-link" href="/orders" class="hover:text-rose-primary transition-colors relative py-2 group" style="display: none;">
+        我的訂單
+        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-primary transition-all group-hover:w-full"></span>
+      </a>
+    </nav>
+
+    <div id="auth-nav" class="flex items-center gap-4">
+      <a href="/login" class="premium-btn bg-rose-primary text-white px-6 py-2.5 rounded-none hover:bg-rose-dark shadow-sm hover:shadow-md transition-all text-xs font-semibold tracking-widest uppercase">登入</a>
+    </div>
+  </div>
+</header>
+

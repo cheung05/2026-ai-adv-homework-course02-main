@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", "Noto Serif TC", serif;
+  --font-sans: "Plus Jakarta Sans", "Noto Sans TC", sans-serif;
+
+  --color-rose-primary: #9C4A5A;
+  --color-rose-dark: #7A3644;
+  --color-rose-light: #DCA5B0;
+  --color-apricot: #E5A88C;
+  --color-sage: #5C7E65;
+  --color-cream: #FAF6F0;
+  --color-blush: #FFF4F2;
+  --color-rose-bg: #F8EBE8;
+  --color-text-primary: #1C1817;
+  --color-text-secondary: #544C4A;
+  --color-text-muted: #938885;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-text-primary);
+  background-image: radial-gradient(circle at 10% 20%, rgba(255, 244, 242, 0.6) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 80%, rgba(248, 235, 232, 0.4) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, .font-serif-custom {
+  font-family: var(--font-serif);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-rose-light);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-rose-primary);
+}
+
+/* Custom Micro-interactions */
+.premium-card {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(156, 74, 90, 0.05);
+}
+.premium-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(156, 74, 90, 0.15);
+  box-shadow: 0 12px 24px -10px rgba(156, 74, 90, 0.08);
+}
+.premium-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.premium-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: rgba(255,255,255,0.1);
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  transition: transform 0.6s ease-out;
+}
+.premium-btn:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+.premium-btn:active {
+  transform: scale(0.97);
+}

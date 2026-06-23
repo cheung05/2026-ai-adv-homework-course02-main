@@ -1,0 +1,197 @@
+<div id="app" class="fade-in">
+  <!-- Hero Banner -->
+  <section class="relative bg-gradient-to-br from-blush via-cream to-rose-bg rounded-none overflow-hidden mb-16 shadow-[0_10px_30px_rgba(156,74,90,0.02)] border border-rose-bg/30">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center py-16 md:py-24 px-8 md:px-16 gap-12">
+      <div class="flex-1 text-center md:text-left">
+        <span class="inline-block text-rose-primary font-serif italic text-lg mb-3 tracking-wider">Aura Flora Boutique</span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-light text-text-primary leading-tight mb-6">
+          讓花藝，裝點您生活的 <span class="italic text-rose-primary font-semibold">每一刻</span>
+        </h1>
+        <p class="text-text-secondary mb-8 leading-relaxed text-sm md:text-base max-w-lg">
+          精選當季頂級鮮花，由專業花藝師手工包裝。每一束花都傳遞著溫暖與祝福，為您的日常空間增添優雅色彩與芬芳。
+        </p>
+        <a href="#products" class="premium-btn inline-block bg-rose-primary text-white px-8 py-3.5 rounded-none hover:bg-rose-dark shadow-sm hover:shadow-md transition-all text-xs font-semibold tracking-widest uppercase">
+          立即探索花藝
+        </a>
+      </div>
+      <div class="flex-1 max-w-md w-full relative">
+        <div class="absolute -inset-1 bg-gradient-to-br from-rose-light/10 to-sage/10 rounded-none blur-xl opacity-20"></div>
+        <img
+          src="https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=600"
+          alt="花藝束"
+          class="relative w-full rounded-none shadow-sm object-cover aspect-[4/5] hover:scale-[1.01] transition-transform duration-700 border border-rose-bg/30"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="mb-16">
+    <div class="text-center mb-10">
+      <span class="text-xs text-rose-primary tracking-widest font-semibold uppercase">Curated</span>
+      <h2 class="text-3xl font-light text-text-primary mt-1">
+        精選推薦
+      </h2>
+      <p class="text-text-muted text-xs mt-2">本季最受歡迎的精緻花卉設計</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div
+        v-for="(product, idx) in products.slice(0, 4)"
+        :key="product.id"
+        class="bg-white/40 backdrop-blur-sm rounded-none overflow-hidden premium-card cursor-pointer"
+        @click="goToProduct(product.id)"
+      >
+        <div class="aspect-square overflow-hidden relative group">
+          <img
+            :src="product.image_url || featuredImages[idx % 4]"
+            :alt="product.name"
+            class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+        <div class="p-4 text-center border-t border-rose-bg/20">
+          <h3 class="font-medium text-xs md:text-sm text-text-primary truncate">{{ product.name }}</h3>
+          <p class="text-rose-primary font-bold text-sm mt-1">NT$ {{ product.price.toLocaleString() }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Story -->
+  <section class="mb-16 bg-white/50 backdrop-blur-sm rounded-none overflow-hidden border border-rose-bg/20 shadow-[0_8px_30px_rgba(0,0,0,0.01)]">
+    <div class="flex flex-col md:flex-row">
+      <div class="md:w-1/2 relative min-h-[300px]">
+        <img
+          src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=600"
+          alt="花藝師"
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+      <div class="md:w-1/2 p-8 md:p-16 flex flex-col justify-center border-l border-rose-bg/20">
+        <span class="text-xs text-sage tracking-widest font-semibold uppercase mb-2">Our Philosophy</span>
+        <h2 class="text-3xl font-light text-text-primary mb-6">
+          專心，做好一束花的感動
+        </h2>
+        <p class="text-text-secondary leading-relaxed mb-6 text-sm">
+          Aura Flora 成立於 2020 年，我們深信每一朵花都有其獨特的生活寓意。透過專業花藝師的溫柔巧手，將大自然最真摯的純粹與美好，化作日常空間中的溫暖芬芳。
+        </p>
+        <p class="text-rose-primary font-serif italic text-lg border-l-2 border-rose-light/50 pl-4 py-1">
+          「每一束花，都是一份用心的浪漫禮物。」
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- All Products Grid -->
+  <section id="products" class="mb-16">
+    <div class="text-center mb-10">
+      <span class="text-xs text-rose-primary tracking-widest font-semibold uppercase">Collection</span>
+      <h2 class="text-3xl font-light text-text-primary mt-1">
+        探索所有花藝
+      </h2>
+      <p class="text-text-muted text-xs mt-2">找到屬於您獨特氣質的那束花</p>
+    </div>
+
+    <div v-if="loading" class="flex justify-center py-16">
+      <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <template v-else>
+      <div v-if="products.length === 0" class="text-center py-16 bg-white/40 rounded-none border border-dashed border-rose-bg/30">
+        <div class="text-4xl mb-4">✿</div>
+        <p class="text-text-secondary text-sm">目前商品正在悉心籌備中</p>
+        <p class="text-text-muted text-xs mt-1">請稍後再來看看</p>
+      </div>
+
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+          v-for="product in products"
+          :key="product.id"
+          @click="goToProduct(product.id)"
+          class="bg-white/40 backdrop-blur-sm rounded-none shadow-[0_4px_20px_rgba(0,0,0,0.01)] overflow-hidden cursor-pointer premium-card group"
+        >
+          <div class="aspect-square overflow-hidden relative">
+            <img
+              :src="product.image_url || 'https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=400'"
+              :alt="product.name"
+              class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          </div>
+          <div class="p-6 border-t border-rose-bg/20">
+            <h3 class="font-medium text-text-primary text-base mb-1 truncate">{{ product.name }}</h3>
+            <p class="text-rose-primary font-bold text-lg mb-4">NT$ {{ product.price.toLocaleString() }}</p>
+            <button
+              @click.stop="addToCart(product)"
+              :disabled="product._adding || product.stock <= 0"
+              class="premium-btn w-full bg-rose-primary text-white py-2.5 rounded-none text-xs font-semibold tracking-widest uppercase hover:bg-rose-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow"
+            >
+              {{ product.stock <= 0 ? '已售完' : '加入購物車' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="pagination.totalPages > 1" class="flex justify-center gap-3 mt-10">
+        <button
+          v-for="p in pagination.totalPages"
+          :key="p"
+          @click="loadProducts(p)"
+          class="w-10 h-10 rounded-none text-xs font-medium transition-all shadow-sm border border-rose-bg/20"
+          :class="p === pagination.page ? 'bg-rose-primary text-white border-rose-primary' : 'bg-white text-text-secondary hover:bg-rose-bg'"
+        >
+          {{ p }}
+        </button>
+      </div>
+    </template>
+  </section>
+
+  <!-- Customer Testimonials -->
+  <section class="mb-16">
+    <div class="text-center mb-10">
+      <span class="text-xs text-sage tracking-widest font-semibold uppercase">Reviews</span>
+      <h2 class="text-3xl font-light text-text-primary mt-1">
+        顧客花束好評分享
+      </h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white/40 backdrop-blur-sm rounded-none p-8 border border-rose-bg/20 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="text-apricot text-xs mb-3">★★★★★</div>
+        <p class="text-text-secondary text-sm leading-relaxed mb-6 font-serif italic">「花束非常漂亮，包裝精緻，送給媽媽她超開心的！配送也很準時。」</p>
+        <p class="text-text-muted text-xs font-medium tracking-widest uppercase">-- 台北小美</p>
+      </div>
+      <div class="bg-white/40 backdrop-blur-sm rounded-none p-8 border border-rose-bg/20 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="text-apricot text-xs mb-3">★★★★★</div>
+        <p class="text-text-secondary text-sm leading-relaxed mb-6 font-serif italic">「第二次購買了，品質一如既往的好。花材新鮮，整體搭配很有美感。」</p>
+        <p class="text-text-muted text-xs font-medium tracking-widest uppercase">-- 桃園阿明</p>
+      </div>
+      <div class="bg-white/40 backdrop-blur-sm rounded-none p-8 border border-rose-bg/20 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="text-apricot text-xs mb-3">★★★★★</div>
+        <p class="text-text-secondary text-sm leading-relaxed mb-6 font-serif italic">「女朋友收到花束超感動！包裝層次感非常好，推薦給大家！」</p>
+        <p class="text-text-muted text-xs font-medium tracking-widest uppercase">-- 台中大衛</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Features -->
+  <section class="mb-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+      <div class="bg-white/40 backdrop-blur-sm rounded-none p-8 border border-rose-bg/20">
+        <div class="text-3xl mb-4">🚚</div>
+        <h3 class="text-lg font-medium text-text-primary mb-2">快速配送</h3>
+        <p class="text-text-muted text-xs">大台北地區可享當日預約配送服務</p>
+      </div>
+      <div class="bg-white/40 backdrop-blur-sm rounded-none p-8 border border-rose-bg/20">
+        <div class="text-3xl mb-4">🎁</div>
+        <h3 class="text-lg font-medium text-text-primary mb-2">精緻包裝</h3>
+        <p class="text-text-muted text-xs">每束鮮花均附品牌專屬保鮮卡與設計紙盒</p>
+      </div>
+      <div class="bg-white/40 backdrop-blur-sm rounded-none p-8 border border-rose-bg/20">
+        <div class="text-3xl mb-4">♥</div>
+        <h3 class="text-lg font-medium text-text-primary mb-2">滿額免運</h3>
+        <p class="text-text-muted text-xs">全店消費滿 NT$ 500 即享免運費優惠</p>
+      </div>
+    </div>
+  </section>
+</div>

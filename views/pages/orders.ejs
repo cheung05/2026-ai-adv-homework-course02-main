@@ -1,0 +1,40 @@
+<div id="app" class="fade-in py-6">
+  <h1 class="text-3xl font-light text-text-primary mb-8 font-serif">我的訂單</h1>
+
+  <div v-if="loading" class="flex justify-center py-24">
+    <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <div v-else-if="orders.length === 0" class="text-center py-20 bg-white/40 rounded-none border border-dashed border-rose-bg/30">
+    <div class="text-5xl mb-4">📦</div>
+    <p class="text-text-secondary text-sm mb-2">您目前尚無任何訂單</p>
+    <p class="text-text-muted text-xs mb-6">快去選購喜歡的花束吧！</p>
+    <a href="/" class="premium-btn inline-block bg-rose-primary text-white px-8 py-3 rounded-none text-xs font-semibold tracking-widest uppercase hover:bg-rose-dark transition-all">去逛逛</a>
+  </div>
+
+  <div v-else class="space-y-6">
+    <a
+      v-for="order in orders"
+      :key="order.id"
+      :href="'/orders/' + order.id"
+      class="block bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 premium-card cursor-pointer"
+    >
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold text-text-secondary tracking-widest uppercase">訂單編號：{{ order.order_no }}</p>
+          <p class="text-[10px] text-text-muted mt-1">{{ new Date(order.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
+        </div>
+        <div class="flex items-center justify-between sm:justify-end gap-6">
+          <span class="font-bold text-text-primary text-base font-serif">NT$ {{ order.total_amount.toLocaleString() }}</span>
+          <span
+            class="text-[10px] tracking-widest font-semibold px-4 py-1.5 rounded-none uppercase border border-current"
+            :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600 border-gray-200'"
+          >
+            {{ statusMap[order.status]?.label || order.status }}
+          </span>
+          <span class="text-rose-primary text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

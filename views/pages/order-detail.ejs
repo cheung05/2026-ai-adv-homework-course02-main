@@ -1,0 +1,90 @@
+<div id="app" data-order-id="<%= orderId %>" data-payment-result="<%= paymentResult %>" class="fade-in py-6">
+  <h1 class="text-3xl font-light text-text-primary mb-8">訂單詳情</h1>
+
+  <div v-if="loading" class="flex justify-center py-24">
+    <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <template v-else-if="order">
+    <!-- Payment Result Alert -->
+    <div
+      v-if="paymentResult && paymentMessages[paymentResult]"
+      class="rounded-none p-4 mb-8 text-xs font-semibold tracking-wider text-center border"
+      :class="paymentMessages[paymentResult].cls"
+    >
+      {{ paymentMessages[paymentResult].text }}
+    </div>
+
+    <!-- Order Info -->
+    <div class="bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 mb-6 shadow-[0_4px_25px_rgba(156,74,90,0.01)]">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold text-text-secondary tracking-wider">訂單編號：{{ order.order_no }}</p>
+          <p class="text-[10px] text-text-muted mt-1">建立日期：{{ new Date(order.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
+        </div>
+        <span
+          class="text-[10px] tracking-wider font-semibold px-4 py-1.5 rounded-none uppercase border border-current"
+          :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600'"
+        >
+          {{ statusMap[order.status]?.label || order.status }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Recipient Info -->
+    <div class="bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 mb-6 shadow-[0_4px_25px_rgba(156,74,90,0.01)]">
+      <h2 class="text-base font-semibold text-text-primary mb-4 pb-2 border-b border-rose-bg/30">收件資訊</h2>
+      <div class="text-xs space-y-2.5 text-text-secondary leading-relaxed">
+        <p>收件人：{{ order.recipient_name }}</p>
+        <p>Email：{{ order.recipient_email }}</p>
+        <p>地址：{{ order.recipient_address }}</p>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 mb-6 shadow-[0_4px_25px_rgba(156,74,90,0.01)]">
+      <h2 class="text-base font-semibold text-text-primary mb-4 pb-2 border-b border-rose-bg/30">商品明細</h2>
+      <table class="w-full text-xs">
+        <thead>
+          <tr class="border-b border-rose-bg/40 text-text-muted">
+            <th class="text-left py-2 font-semibold">商品名稱</th>
+            <th class="text-right py-2 font-semibold">單價</th>
+            <th class="text-right py-2 font-semibold">數量</th>
+            <th class="text-right py-2 font-semibold">小計</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in order.items" :key="item.id" class="border-b border-rose-bg/20">
+            <td class="py-3.5 text-text-primary font-medium">{{ item.product_name }}</td>
+            <td class="py-3.5 text-right text-text-secondary">NT$ {{ item.product_price.toLocaleString() }}</td>
+            <td class="py-3.5 text-right text-text-secondary">{{ item.quantity }}</td>
+            <td class="py-3.5 text-right text-text-primary font-bold">NT$ {{ (item.product_price * item.quantity).toLocaleString() }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="pt-4 text-right font-medium text-text-primary">總計</td>
+            <td class="pt-4 text-right font-bold text-rose-primary text-base">NT$ {{ order.total_amount.toLocaleString() }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Payment Actions -->
+    <div v-if="order.status === 'pending'" class="flex gap-4">
+      <button
+        @click="checkPayment"
+        :disabled="paying"
+        class="premium-btn flex-1 sm:flex-none bg-sage text-white px-8 py-3 rounded-none text-xs font-semibold tracking-wider hover:bg-sage/90 transition-all disabled:opacity-40 shadow-sm"
+      >
+        {{ paying ? '查詢中...' : '查詢付款狀態' }}
+      </button>
+      <a
+        :href="'/ecpay/payment/' + order.id"
+        class="premium-btn flex-1 sm:flex-none bg-rose-primary text-white px-8 py-3 rounded-none text-xs font-semibold tracking-wider hover:bg-rose-dark transition-all text-center shadow-sm"
+      >
+        前往付款
+      </a>
+    </div>
+  </template>
+</div>

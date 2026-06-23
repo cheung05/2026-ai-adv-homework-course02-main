@@ -1,0 +1,149 @@
+<div id="app" class="fade-in">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <h1 class="text-3xl font-light text-text-primary">訂單管理</h1>
+    <div class="flex items-center gap-3">
+      <label class="text-xs font-semibold text-text-secondary tracking-wider uppercase">狀態篩選</label>
+      <select
+        v-model="statusFilter"
+        class="border border-rose-bg/60 rounded-none px-5 py-2.5 text-xs focus:outline-none focus:border-rose-primary bg-white/50 backdrop-blur-sm transition-all"
+      >
+        <option value="">全部</option>
+        <option value="pending">待付款</option>
+        <option value="paid">已付款</option>
+        <option value="failed">付款失敗</option>
+      </select>
+    </div>
+  </div>
+
+  <div v-if="loading" class="flex justify-center py-24">
+    <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <template v-else>
+    <div class="bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 shadow-[0_4px_25px_rgba(156,74,90,0.01)] overflow-hidden">
+      <table class="w-full text-xs">
+        <thead>
+          <tr class="bg-rose-bg/20 text-text-secondary border-b border-rose-bg/30">
+            <th class="text-left px-6 py-4 font-semibold">訂單編號</th>
+            <th class="text-left px-6 py-4 font-semibold">買家</th>
+            <th class="text-right px-6 py-4 font-semibold">金額</th>
+            <th class="text-center px-6 py-4 font-semibold">狀態</th>
+            <th class="text-right px-6 py-4 font-semibold">日期</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="order in orders"
+            :key="order.id"
+            class="border-b border-rose-bg/10 hover:bg-white/30 cursor-pointer transition-colors"
+            @click="viewDetail(order.id)"
+          >
+            <td class="px-6 py-4 text-text-primary font-medium">{{ order.order_no }}</td>
+            <td class="px-6 py-4 text-text-secondary">{{ order.recipient_name }}</td>
+            <td class="px-6 py-4 text-right text-text-primary font-medium">NT$ {{ order.total_amount.toLocaleString() }}</td>
+            <td class="px-6 py-4 text-center">
+              <span
+                class="text-[10px] tracking-wider font-semibold px-4 py-1.5 rounded-none uppercase border border-current"
+                :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600'"
+              >
+                {{ statusMap[order.status]?.label || order.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-right text-text-muted">
+              {{ new Date(order.created_at).toLocaleDateString('zh-TW') }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div v-if="pagination.totalPages > 1" class="flex justify-center gap-3 mt-8">
+      <button
+        v-for="p in pagination.totalPages"
+        :key="p"
+        @click="loadOrders(p)"
+        class="w-10 h-10 rounded-none text-xs font-semibold transition-all border border-rose-bg/25 shadow-sm"
+        :class="p === pagination.page ? 'bg-rose-primary text-white border-rose-primary' : 'bg-white text-text-secondary hover:bg-rose-bg'"
+      >
+        {{ p }}
+      </button>
+    </div>
+  </template>
+
+  <!-- Order Detail Modal -->
+  <div v-if="detailVisible" class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" @click="detailVisible = false"></div>
+    <div class="relative bg-white rounded-none border border-rose-bg/30 shadow-2xl w-full max-w-2xl mx-4 p-8 max-h-[80vh] overflow-y-auto animate-scale-up">
+      <div v-if="detailLoading" class="flex justify-center py-16">
+        <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <template v-else-if="detailOrder">
+        <div class="flex items-start justify-between mb-6 pb-2 border-b border-rose-bg/30">
+          <h3 class="text-lg font-semibold text-text-primary">訂單詳情</h3>
+          <button @click="detailVisible = false" class="text-text-muted hover:text-text-primary text-xl">&times;</button>
+        </div>
+
+        <div class="space-y-6 text-xs leading-relaxed">
+          <div class="grid grid-cols-2 gap-6 bg-blush/40 border border-rose-bg/30 rounded-none p-5 shadow-[0_4px_15px_rgba(0,0,0,0.005)]">
+            <div>
+              <p class="text-text-muted mb-1">訂單編號</p>
+              <p class="text-text-primary font-medium">{{ detailOrder.order_no }}</p>
+            </div>
+            <div>
+              <p class="text-text-muted mb-1">狀態</p>
+              <span
+                class="inline-block text-[10px] tracking-wider font-semibold px-4 py-1 rounded-none uppercase mt-0.5 border border-current"
+                :class="statusMap[detailOrder.status]?.cls || 'bg-gray-100 text-gray-600'"
+              >
+                {{ statusMap[detailOrder.status]?.label || detailOrder.status }}
+              </span>
+            </div>
+            <div>
+              <p class="text-text-muted mb-1">買家</p>
+              <p class="text-text-primary font-medium">{{ detailOrder.user?.name }} <span class="text-text-secondary font-normal">({{ detailOrder.user?.email }})</span></p>
+            </div>
+            <div>
+              <p class="text-text-muted mb-1">訂購日期</p>
+              <p class="text-text-primary font-medium">{{ new Date(detailOrder.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) }}</p>
+            </div>
+          </div>
+
+          <div class="border-t border-rose-bg/20 pt-4">
+            <p class="text-xs font-semibold text-text-secondary mb-2.5 tracking-wider uppercase">收件資訊</p>
+            <div class="space-y-1.5 text-text-secondary pl-1">
+              <p>收件人姓名：{{ detailOrder.recipient_name }}</p>
+              <p>聯絡信箱：{{ detailOrder.recipient_email }}</p>
+              <p>配送地址：{{ detailOrder.recipient_address }}</p>
+            </div>
+          </div>
+
+          <div class="border-t border-rose-bg/20 pt-4">
+            <p class="text-xs font-semibold text-text-secondary mb-3 tracking-wider uppercase">商品明細</p>
+            <table class="w-full">
+              <thead>
+                <tr class="text-text-muted border-b border-rose-bg/30">
+                  <th class="text-left py-2 font-semibold">商品名稱</th>
+                  <th class="text-right py-2 font-semibold">單價</th>
+                  <th class="text-right py-2 font-semibold">數量</th>
+                  <th class="text-right py-2 font-semibold">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in detailOrder.items" :key="item.id" class="border-b border-rose-bg/10">
+                  <td class="py-3 text-text-primary font-medium">{{ item.product_name }}</td>
+                  <td class="py-3 text-right text-text-secondary">NT$ {{ item.product_price.toLocaleString() }}</td>
+                  <td class="py-3 text-right text-text-secondary">{{ item.quantity }}</td>
+                  <td class="py-3 text-right text-text-primary font-bold">NT$ {{ (item.product_price * item.quantity).toLocaleString() }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="flex justify-end mt-4 pt-3 border-t border-rose-bg/20">
+              <span class="font-bold text-rose-primary text-base">總計 NT$ {{ detailOrder.total_amount.toLocaleString() }}</span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>

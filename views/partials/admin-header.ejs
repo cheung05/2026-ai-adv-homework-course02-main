@@ -1,0 +1,14 @@
+<header class="sticky top-0 z-50 bg-[#1C1817] text-white shadow-md">
+  <div class="flex items-center justify-between px-6 h-20">
+    <span class="font-serif italic text-2xl font-bold text-rose-light flex items-baseline gap-2">
+      Aura Flora
+      <span class="text-xs not-italic text-text-muted font-sans font-normal">後台管理</span>
+    </span>
+    <div id="admin-auth-nav" class="flex items-center gap-6 text-xs font-semibold tracking-wider">
+      <a href="/" class="text-text-muted hover:text-white transition-colors">返回前台</a>
+      <span class="text-text-secondary">|</span>
+      <span class="text-rose-light" id="admin-username"></span>
+      <button onclick="Auth.logout()" class="text-text-muted hover:text-red-400 transition-colors uppercase cursor-pointer">登出</button>
+    </div>
+  </div>
+</header>

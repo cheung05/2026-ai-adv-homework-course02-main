@@ -1,0 +1,85 @@
+<div id="app" data-product-id="<%= productId %>" class="fade-in py-6">
+  <div v-if="loading" class="flex justify-center py-24">
+    <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <div v-else-if="notFound" class="text-center py-24 bg-white/40 rounded-none border border-dashed border-rose-bg/30">
+    <div class="text-5xl mb-4">✿</div>
+    <h2 class="text-xl font-light text-text-primary mb-3">抱歉，找不到該商品</h2>
+    <a href="/" class="premium-btn inline-block bg-rose-primary text-white px-6 py-2.5 rounded-none text-xs font-semibold tracking-widest uppercase hover:bg-rose-dark transition-all">回到首頁</a>
+  </div>
+
+  <div v-else-if="product" class="flex flex-col md:flex-row gap-12 md:gap-16">
+    <!-- Left: Image -->
+    <div class="md:w-1/2 relative">
+      <div class="absolute -inset-1 bg-gradient-to-br from-rose-light/10 to-sage/10 rounded-none blur-xl opacity-20"></div>
+      <div class="rounded-none overflow-hidden shadow-[0_8px_30px_rgba(156,74,90,0.02)] border border-rose-bg/30 relative">
+        <img
+          :src="product.image_url || 'https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=600'"
+          :alt="product.name"
+          class="w-full aspect-square object-cover hover:scale-101 transition-transform duration-700"
+        />
+      </div>
+    </div>
+
+    <!-- Right: Info -->
+    <div class="md:w-1/2 flex flex-col justify-center">
+      <span class="text-xs text-rose-primary tracking-widest font-semibold uppercase mb-2">Exquisite Arrangement</span>
+      <h1 class="text-3xl md:text-4xl font-light text-text-primary leading-tight mb-4 font-serif">
+        {{ product.name }}
+      </h1>
+      <p class="text-3xl text-rose-primary font-bold mb-6 font-serif">NT$ {{ product.price.toLocaleString() }}</p>
+
+      <div class="mb-6 flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-none text-xs font-medium bg-sage/10 text-sage border border-sage/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-sage"></span>
+          庫存充足：尚有 {{ product.stock }} 件
+        </span>
+      </div>
+
+      <p class="text-text-secondary leading-relaxed mb-8 text-sm">{{ product.description }}</p>
+
+      <!-- Quantity Selector -->
+      <div class="flex items-center gap-6 mb-8">
+        <span class="text-sm font-medium text-text-secondary">選擇數量</span>
+        <div class="flex items-center border border-rose-bg/60 rounded-none overflow-hidden bg-white/50 backdrop-blur-sm">
+          <button
+            @click="decrease"
+            class="w-10 h-10 flex items-center justify-center hover:bg-rose-bg/30 text-text-secondary font-medium transition-colors"
+          >
+            -
+          </button>
+          <span class="w-12 h-10 flex items-center justify-center text-xs font-semibold border-x border-rose-bg/30 text-text-primary">
+            {{ quantity }}
+          </span>
+          <button
+            @click="increase"
+            class="w-10 h-10 flex items-center justify-center hover:bg-rose-bg/30 text-text-secondary font-medium transition-colors"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      <button
+        @click="addToCart"
+        :disabled="adding || product.stock <= 0"
+        class="premium-btn w-full bg-rose-primary text-white py-3.5 rounded-none text-xs font-semibold tracking-widest uppercase hover:bg-rose-dark transition-colors disabled:opacity-40 shadow-md hover:shadow-lg"
+      >
+        {{ product.stock <= 0 ? '已售完' : '加入購物車' }}
+      </button>
+
+      <!-- Purchase Notes -->
+      <div class="mt-8 bg-blush/60 border border-rose-bg/40 rounded-none p-6 shadow-[0_4px_20px_rgba(0,0,0,0.005)]">
+        <h3 class="font-medium text-text-primary mb-3 text-sm flex items-center gap-1.5 font-serif italic">
+          <span class="text-rose-primary text-base">✿</span> 購買須知
+        </h3>
+        <ul class="text-text-muted text-xs space-y-2 leading-relaxed">
+          <li class="flex items-start gap-1"><span class="text-rose-primary">•</span> <span>花材均為大自然產物，實際花束可能因季節與產地略有不同。</span></li>
+          <li class="flex items-start gap-1"><span class="text-rose-primary">•</span> <span>大台北地區可享當日預約配送服務，請提前預訂。</span></li>
+          <li class="flex items-start gap-1"><span class="text-rose-primary">•</span> <span>全店消費滿 NT$ 500 即享免運費，未滿則收 NT$ 150 運費。</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
