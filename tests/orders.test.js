@@ -1,4 +1,6 @@
 const { app, request, registerUser } = require('./setup');
+const ecpayUtils = require('../src/utils/ecpay');
+const db = require('../src/database');
 
 describe('Orders API', () => {
   let userToken;
@@ -110,5 +112,65 @@ describe('Orders API', () => {
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty('data', null);
     expect(res.body).toHaveProperty('error');
+  });
+
+  describe('POST /api/orders/:id/check-payment', () => {
+    beforeEach(() => {
+      // 確保每次測試前，訂單狀態皆為 pending
+      db.prepare("UPDATE orders SET status = 'pending' WHERE id = ?").run(orderId);
+    });
+
+    it('應能成功查詢並更新已付款之訂單狀態且通過 CheckMacValue 驗證', async () => {
+      const responseParams = {
+        TradeStatus: '1',
+        MerchantID: '3002607',
+        MerchantTradeNo: 'ORD' + Date.now()
+      };
+      responseParams.CheckMacValue = ecpayUtils.generateCheckMacValue(
+        responseParams,
+        ecpayUtils.ECPAY_CONFIG.hashKey,
+        ecpayUtils.ECPAY_CONFIG.hashIV
+      );
+      const urlEncoded = new URLSearchParams(responseParams).toString();
+
+      const spyFetch = vi.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        text: async () => urlEncoded
+      });
+
+      const res = await request(app)
+        .post(`/api/orders/${orderId}/check-payment`)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.status).toBe('paid');
+      expect(res.body.error).toBeNull();
+
+      spyFetch.mockRestore();
+    });
+
+    it('若 CheckMacValue 驗證失敗應回傳 400 錯誤與 ECPAY_VERIFY_ERROR', async () => {
+      const responseParams = {
+        TradeStatus: '1',
+        MerchantID: '3002607',
+        MerchantTradeNo: 'ORD' + Date.now(),
+        CheckMacValue: 'INVALID_MAC_SIGNATURE_HERE'
+      };
+      const urlEncoded = new URLSearchParams(responseParams).toString();
+
+      const spyFetch = vi.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        text: async () => urlEncoded
+      });
+
+      const res = await request(app)
+        .post(`/api/orders/${orderId}/check-payment`)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe('ECPAY_VERIFY_ERROR');
+
+      spyFetch.mockRestore();
+    });
   });
 });

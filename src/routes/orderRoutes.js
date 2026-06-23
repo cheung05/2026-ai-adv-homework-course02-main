@@ -463,6 +463,16 @@ router.post('/:id/check-payment', async (req, res) => {
   try {
     const result = await queryTradeInfo(order.merchant_trade_no);
 
+    // 驗證綠界回應的 CheckMacValue，確保資料完整與安全性
+    if (!verifyCheckMacValue(result, ECPAY_CONFIG.hashKey, ECPAY_CONFIG.hashIV)) {
+      console.error('[ECPay] CheckMacValue verification failed on QueryTradeInfo response');
+      return res.status(400).json({
+        data: null,
+        error: 'ECPAY_VERIFY_ERROR',
+        message: '驗證失敗，綠界金流回應資料可能已被竄改'
+      });
+    }
+
     if (result.TradeStatus === '1') {
       db.prepare('UPDATE orders SET status = ? WHERE id = ?').run('paid', order.id);
       const updated = db.prepare('SELECT * FROM orders WHERE id = ?').get(order.id);
