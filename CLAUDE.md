@@ -5,6 +5,7 @@
 
 ## 常用指令
 ```bash
+npm install            # 安裝套件依賴
 npm run start          # 編譯 CSS 並啟動伺服器
 npm run dev:server     # 僅啟動伺服器（不編譯 CSS）
 npm run dev:css        # Tailwind CSS watch 模式
@@ -21,12 +22,9 @@ npm run openapi        # 從 JSDoc 生成 openapi.json
 - 功能開發使用 docs/plans/ 記錄計畫；完成後移至 docs/plans/archive/
 
 ## 詳細文件
-- ./docs/README.md — 項目介紹與快速開始
-- ./docs/ARCHITECTURE.md — 架構、目錄結構、資料流
-- ./docs/DEVELOPMENT.md — 開發規範、命名規則
-- ./docs/FEATURES.md — 功能列表與完成狀態
-- ./docs/TESTING.md — 測試規範與指南
-- ./docs/CHANGELOG.md — 更新日誌
-
-## 回覆的語氣
-- 請採用文言文的方式，回覆我訊息，以節省回覆的 token（開發上不需要特別節省）
+- ./docs/README.md  項目介紹與快速開始
+- ./docs/ARCHITECTURE.md  架構、目錄結構、資料流
+- ./docs/DEVELOPMENT.md  開發規範、命名規則
+- ./docs/FEATURES.md  功能列表與完成狀態
+- ./docs/TESTING.md  測試規範與指南
+- ./docs/CHANGELOG.md  更新日誌
