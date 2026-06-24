@@ -18,6 +18,8 @@
   - 新增 `GET /ecpay/payment/:orderId` 路由，用作自動 POST 送出至綠界付款畫面之中繼網頁。
   - 新增 `POST /api/orders/:id/check-payment`，供前台頁面載入或手動查詢時主動跟綠界核對付款狀態。
 - **資料庫 Schema 遷移**：為 `orders` 表新增 `merchant_trade_no` 欄位（order_no 去除 `-` 連字號），以滿足綠界最大長度 20 字元之規範限制。
+- **安全性驗證與測試**：
+  - 於 `tests/orders.test.js` 新增模擬綠界回應簽章驗證成功與失敗的測試案例，驗證 `POST /api/orders/:id/check-payment` 在不同簽章狀況下的反應，確保金流查詢邏輯的完整性與安全性。
 
 #### Changed (調整)
 - **前台結帳邏輯**：更新 [checkout.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/public/js/pages/checkout.js)，送出結帳訂單後立即將瀏覽器導向 `/ecpay/payment/:orderId`，藉由綠界付款中繼頁導引至綠界完成付款。
@@ -25,6 +27,7 @@
   - 移除先前的「模擬付款成功/失敗」按鈕。
   - 新增「前往綠界付款」與「更新付款狀態」按鈕（供待付款訂單使用）。
   - 當使用者從綠界完成付款導回 `payment=pending` 時，自動背景觸發 `check-payment` 以無感更新付款狀態。
+- **金流狀態查詢安全性增強**：於 `POST /api/orders/:id/check-payment` 中引入 `verifyCheckMacValue` 校驗綠界回應之數位簽章（CheckMacValue）。若驗證失敗，回傳 `400 ECPAY_VERIFY_ERROR`，拒絕更改訂單狀態，以防止交易資料被惡意竄改。
 
 ---
 

@@ -240,6 +240,7 @@
 | `STOCK_INSUFFICIENT`| 400 | 購物車加入或結帳扣庫存時，數量超出商品之現有庫存 |
 | `CART_EMPTY` | 400 | 購物車查無任何品項，無法進行訂單建立 |
 | `INVALID_STATUS` | 400 | 訂單已付款或已失敗，重覆發送模擬付款要求時觸發 |
+| `ECPAY_VERIFY_ERROR`| 400 | 綠界金流主動查詢時，回應的數位簽章（CheckMacValue）驗證失敗，回應資料可能已被竄改 |
 | `UNAUTHORIZED` | 401 | 缺少 Bearer Token、JWT 驗證解密失敗、Token 過期或所屬 User ID 於 DB 中不存在 |
 | `FORBIDDEN` | 403 | 使用者已通過 JWT 驗證，但角色 role 不為 `admin`，存取後台 API 時觸發 |
 | `NOT_FOUND` | 404 | 查詢的商品 ID、訂單 ID、或購物車項目 ID 不存在，或是操作非本人的訂單 |
@@ -378,7 +379,7 @@
              │    ├── 封裝參數（MerchantID, MerchantTradeNo, TimeStamp）並生成 CheckMacValue
              │    └── 向綠界 QueryTradeInfo V5 API 發送 x-www-form-urlencoded POST 請求
              ├── 接收綠界回應，解析 URL-encoded Response
-             ├── 驗證回傳之 CheckMacValue，確保資料未遭竄改
+             ├── 使用 `verifyCheckMacValue` 驗證回傳之 CheckMacValue。若驗證失敗，回傳 `400 ECPAY_VERIFY_ERROR`，拒絕更新狀態，確保資料安全性
              ├── 判定 TradeStatus === '1' (代表付款成功)
              │    ├── 將訂單狀態更新為 'paid' 寫入資料庫
              │    └── 回傳 200 { data: order, message: '付款成功' }

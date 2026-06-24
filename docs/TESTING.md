@@ -58,7 +58,7 @@ export default defineConfig({
 | [auth.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/auth.test.js) | 會員註冊、登入、重複 Email 拒絕、個人資料保護與 API 獲取。 | **第 1 順位**。負責驗證底層密碼雜湊與 Token 發放。無任何前置依賴。 |
 | [products.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/products.test.js) | 商品列表分頁、商品詳情取得、404 商品不存在處理。 | **第 2 順位**。依賴資料庫初始化所建立之 8 筆預設種子商品。 |
 | [cart.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/cart.test.js) | 購物車加入、商品數量直接修改、累加、移除、訪客 Session 與會員 JWT 雙模式測試。 | **第 3 順位**。需要 [auth.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/auth.test.js) 中正常生成的 Token 以及商品存在。 |
-| [orders.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/orders.test.js) | 會員結帳（扣庫存原子操作）、空購物車建立防護、訂單詳情、模擬付款。 | **第 4 順位**。依賴購物車內存有品項（由 [cart.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/cart.test.js) 執行後寫入）。 |
+| [orders.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/orders.test.js) | 會員結帳（扣庫存原子操作）、空購物車建立防護、訂單詳情、模擬付款、綠界金流主動查詢之安全簽章（CheckMacValue）驗證測試（成功與失敗情境）。 | **第 4 順位**。依賴購物車內存有品項（由 [cart.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/cart.test.js) 執行後寫入）。 |
 | [adminProducts.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/adminProducts.test.js) | 管理端商品 CRUD、權限不足 403 阻擋、商品遭 pending 訂單佔用無法刪除測試。 | **第 5 順位**。依賴 admin 權限，且必須在有 pending 訂單的環境下測試防刪邏輯。 |
 | [adminOrders.test.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/tests/adminOrders.test.js) | 管理端所有訂單查詢、分頁與狀態篩選。 | **第 6 順位**。需要系統中已有產生之訂單與 admin Token。 |
 

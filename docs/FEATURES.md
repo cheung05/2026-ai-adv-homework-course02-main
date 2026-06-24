@@ -4,6 +4,31 @@
 
 ---
 
+## 功能狀態總覽表
+
+| 功能模組 | 功能 / API | 狀態 | 說明 |
+| :--- | :--- | :---: | :--- |
+| **會員認證** | 註冊新帳號 (`POST /api/auth/register`) | ✅ 完成 | 建立新帳號並自動登入 |
+| **會員認證** | 會員登入驗證 (`POST /api/auth/login`) | ✅ 完成 | 驗證帳密並簽發 JWT Token |
+| **會員認證** | 取得會員個人資料 (`GET /api/auth/profile`) | ✅ 完成 | 獲取當前登入會員資料 |
+| **商品瀏覽** | 取得公開商品列表 (`GET /api/products`) | ✅ 完成 | 前台分頁商品列表，預設依時間降序 |
+| **商品瀏覽** | 取得單一商品詳情 (`GET /api/products/:id`) | ✅ 完成 | 獲取商品詳細資訊與庫存 |
+| **購物車管理** | 查看購物車內容 (`GET /api/cart`) | ✅ 完成 | 會員/訪客雙模式購物車內容查詢 |
+| **購物車管理** | 加入商品到購物車 (`POST /api/cart`) | ✅ 完成 | 加入購物車（存在則累加，檢驗庫存） |
+| **購物車管理** | 修改項目數量 (`PATCH /api/cart/:itemId`) | ✅ 完成 | 直接重設購物車項目數量 |
+| **購物車管理** | 移除購物車品項 (`DELETE /api/cart/:itemId`) | ✅ 完成 | 移除購物車中指定項目 |
+| **訂單管理** | 建立訂單 (`POST /api/orders`) | ✅ 完成 | 購物車結帳，Transaction 控制（扣減庫存、清空購物車） |
+| **訂單管理** | 模擬付款機制 (`PATCH /api/orders/:id/pay`) | ✅ 完成 | 模擬付款成功與失敗（開發測試用） |
+| **綠界金流串接** | 產生自動提交付款表單頁面 (`GET /ecpay/payment/:orderId`) | ✅ 完成 | 產生綠界 AIO 參數與 CheckMacValue，自動 POST 導向 |
+| **綠界金流串接** | 查詢綠界付款狀態 (`POST /api/orders/:id/check-payment`) | ✅ 完成 | 包含主動查詢與 CheckMacValue 安全性簽章驗證 |
+| **後台管理** | 後台新增商品 (`POST /api/admin/products`) | ✅ 完成 | 管理端新增商品項目 |
+| **後台管理** | 後台編輯商品 (`PUT /api/admin/products/:id`) | ✅ 完成 | 管理端部分更新商品資訊 |
+| **後台管理** | 後台刪除商品 (`DELETE /api/admin/products/:id`) | ✅ 完成 | 管理端刪除商品，受 pending 訂單限制 |
+| **後台管理** | 後台訂單列表查詢 (`GET /api/admin/orders`) | ✅ 完成 | 管理端訂單分頁查詢（支援狀態篩選） |
+
+---
+
+
 ## 會員認證功能模組
 
 ### 1. 註冊新帳號 (`POST /api/auth/register`)
@@ -211,14 +236,16 @@
   4. 調用 [ecpay.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/utils/ecpay.js) 之 `queryTradeInfo(merchantTradeNo)`：
      - 組裝請求參數，產生 CheckMacValue。
      - 向綠界 `/Cashier/QueryTradeInfo/V5` 測試端點發送 POST 請求。
-     - 解析綠界傳回之 URL-encoded 格式字串，進行 `verifyCheckMacValue` 安全簽章比對。
-     - 判定 `TradeStatus === '1'` (代表交易成功)。
+     - 解析綠界傳回之 URL-encoded 格式字串，轉為結果物件。
+     - 使用 `verifyCheckMacValue` 對結果物件進行數位簽章（CheckMacValue）驗證，比對回傳的所有參數（排除 CheckMacValue）是否與回傳的簽章相符，以防止付款狀態被惡意偽造或竄改。若驗證失敗，回傳 `400 ECPAY_VERIFY_ERROR`，拒絕後續狀態更新。
+     - 判定 `TradeStatus === '1'`（代表交易成功）。
   5. 若綠界交易成功，執行資料庫 `UPDATE orders SET status = 'paid' WHERE id = ?`。
   6. 回傳查詢結果與最新訂單狀態。
 - **錯誤情境與狀態碼**：
   - `400 Bad Request` (`NO_TRADE_NO`)：訂單查無交易號。
+  - `400 Bad Request` (`ECPAY_VERIFY_ERROR`)：綠界金流回應之數位簽章（CheckMacValue）驗證失敗，回應資料可能已被竄改。
   - `404 Not Found` (`NOT_FOUND`)：訂單不存在。
-  - `500 Internal Server Error` (`ECPAY_QUERY_ERROR`)：串接綠界 API 失敗或簽章錯誤。
+  - `500 Internal Server Error` (`ECPAY_QUERY_ERROR`)：串接綠界 API 失敗。
 
 ---
 
