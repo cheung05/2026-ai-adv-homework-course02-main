@@ -6,9 +6,7 @@
 
 ## [Unreleased]
 
-### 綠界金流串接 (ECPay Integration)
-
-#### Added (新增)
+### Added (新增)
 - **金流處理工具模組**：新增 `src/utils/ecpay.js`。
   - 實作符合綠界特定規格的 .NET `HttpUtility.UrlEncode` 相容編碼函數 `ecpayUrlEncode`。
   - 實作 `generateCheckMacValue` 產生 SHA256 大寫簽章，包含欄位排序與 HashKey/HashIV 拼接。
@@ -21,7 +19,7 @@
 - **安全性驗證與測試**：
   - 於 `tests/orders.test.js` 新增模擬綠界回應簽章驗證成功與失敗的測試案例，驗證 `POST /api/orders/:id/check-payment` 在不同簽章狀況下的反應，確保金流查詢邏輯的完整性與安全性。
 
-#### Changed (調整)
+### Changed (調整)
 - **前台結帳邏輯**：更新 [checkout.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/public/js/pages/checkout.js)，送出結帳訂單後立即將瀏覽器導向 `/ecpay/payment/:orderId`，藉由綠界付款中繼頁導引至綠界完成付款。
 - **前台訂單詳情頁面**：
   - 移除先前的「模擬付款成功/失敗」按鈕。

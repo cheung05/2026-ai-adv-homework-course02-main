@@ -175,6 +175,23 @@
 | **後台管理** | DELETE | `/api/admin/products/:id` | JWT + Admin | 刪除指定商品（限制無 pending 狀態訂單關聯） | [adminProductRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/adminProductRoutes.js) |
 | **後台管理** | GET | `/api/admin/orders` | JWT + Admin | 後台所有會員之訂單分頁列表（支援狀態篩選） | [adminOrderRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/adminOrderRoutes.js) |
 | **後台管理** | GET | `/api/admin/orders/:id` | JWT + Admin | 後台訂單明細查詢（額外回傳下單會員聯絡資料） | [adminOrderRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/adminOrderRoutes.js) |
+ 
+ ---
+ 
+## 頁面路由總覽表
+
+| 頁面分組 | 請求方法 | 路由路徑 | 認證與限制 | 說明 | 處理器檔案路徑 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **前台首頁** | GET | `/` | 公開 | 渲染首頁，展示商品列表 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **商品瀏覽** | GET | `/products/:id` | 公開 | 渲染商品詳情頁，查看商品資訊與庫存 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **購物車管理** | GET | `/cart` | 公開 | 渲染購物車頁面，顯示商品項目與合計金額 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **結帳流程** | GET | `/checkout` | 公開 (前端驗證 JWT) | 渲染結帳頁面，填寫收件資訊 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **會員認證** | GET | `/login` | 公開 | 渲染註冊與登入頁面 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **訂單管理** | GET | `/orders` | 公開 (前端驗證 JWT) | 渲染當前會員之歷史訂單列表 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **訂單管理** | GET | `/orders/:id` | 公開 (前端驗證 JWT) | 渲染指定訂單之詳情，支援綠界回導及手動狀態更新 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **綠界金流串接** | GET | `/ecpay/payment/:orderId` | 公開 | 綠界 AIO 付款中繼網頁，自動以 POST 方式將表單導向綠界測試閘道 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **後台管理** | GET | `/admin/products` | JWT + Admin (前端驗證) | 渲染管理端之商品管理主頁面 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
+| **後台管理** | GET | `/admin/orders` | JWT + Admin (前端驗證) | 渲染管理端之訂單管理主頁面 | [pageRoutes.js](file:///C:/Users/chris/Downloads/2026-ai-adv-homework-course02-main/src/routes/pageRoutes.js) |
 
 ---
 

@@ -219,16 +219,23 @@
 ### 1. 產生自動提交付款表單頁面 (`GET /ecpay/payment/:orderId`)
 - **行為描述**：產生一個包含綠界 AIO 參數的 HTML 網頁。該網頁在客戶端瀏覽器載入後，會利用 JavaScript 自動觸發 `submit()`，將使用者導向綠界 staging 付款畫面。
 - **認證要求**：公開端點。
+- **路徑參數 (Path Parameters)**：
+  - `orderId` (string, **必填**): 訂單唯一識別碼 (UUID v4)。
 - **詳細業務邏輯**：
   1. 根據 `orderId` 查詢訂單。若訂單不存在回應 `404 Not Found`。
   2. 若訂單 status 已非 `'pending'`，則直接重導向至 `/orders/:orderId` 訂單明細網頁。
   3. 查詢該訂單之所有 `order_items` 明細。
   4. 準備綠界 AIO 表單參數，並以專屬的 `ecpayUrlEncode` 加密產生 `CheckMacValue`。
   5. 回傳 `text/html` 表單網頁。
+- **錯誤情境與狀態碼**：
+  - `302 Found` (重導向)：若訂單狀態已經是 `'paid'` 或 `'failed'`，則自動跳轉重導至該訂單之詳情頁 (`/orders/:orderId`)。
+  - `404 Not Found`：訂單不存在時，回傳 `404` 錯誤與 `訂單不存在` 提示訊息。
 
 ### 2. 查詢綠界付款狀態 (`POST /api/orders/:id/check-payment`)
 - **行為描述**：為了解決本機端無法被綠界呼叫 `ReturnURL` 的限制，提供此端點由網頁載入時主動發送 API 請求給綠界進行查詢，以更新本機端資料庫之訂單狀態。
 - **認證要求**：`Bearer JWT` 會員認證。
+- **路徑參數 (Path Parameters)**：
+  - `id` (string, **必填**): 訂單唯一識別碼 (UUID v4)。
 - **詳細業務邏輯**：
   1. 根據訂單 ID 與會員 `userId` 查詢訂單。若查無回傳 `404 NOT_FOUND`。
   2. 若訂單 status 已經是 `'paid'` 或 `'failed'`，則無須重複向綠界查詢，直接回傳最新資料。
