@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Cormorant Garamond", "Noto Serif TC", serif;
+  --font-serif: "Playfair Display", "Cormorant Garamond", "Noto Serif TC", serif;
   --font-sans: "Plus Jakarta Sans", "Noto Sans TC", sans-serif;
 
-  --color-rose-primary: #9C4A5A;
-  --color-rose-dark: #7A3644;
-  --color-rose-light: #DCA5B0;
-  --color-apricot: #E5A88C;
-  --color-sage: #5C7E65;
-  --color-cream: #FAF6F0;
-  --color-blush: #FFF4F2;
-  --color-rose-bg: #F8EBE8;
-  --color-text-primary: #1C1817;
-  --color-text-secondary: #544C4A;
-  --color-text-muted: #938885;
+  --color-rose-primary: #843C4B;
+  --color-rose-dark: #682E3A;
+  --color-rose-light: #A66170;
+  --color-apricot: #DE9371;
+  --color-sage: #4F6D55;
+  --color-cream: #FAF7F2;
+  --color-blush: #FFF2EF;
+  --color-rose-bg: #F0E5E2;
+  --color-text-primary: #2C2625;
+  --color-text-secondary: #5A5251;
+  --color-text-muted: #8D8280;
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--color-cream);
   color: var(--color-text-primary);
-  background-image: radial-gradient(circle at 10% 20%, rgba(255, 244, 242, 0.6) 0%, transparent 40%),
-                    radial-gradient(circle at 90% 80%, rgba(248, 235, 232, 0.4) 0%, transparent 50%);
+  background-image: radial-gradient(circle at 10% 20%, rgba(255, 242, 239, 0.6) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 80%, rgba(240, 229, 226, 0.4) 0%, transparent 50%);
   background-attachment: fixed;
 }
 
