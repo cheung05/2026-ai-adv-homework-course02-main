@@ -1,90 +1,164 @@
-<div id="app" data-order-id="<%= orderId %>" data-payment-result="<%= paymentResult %>" class="fade-in py-6">
-  <h1 class="text-3xl font-light text-text-primary mb-8">訂單詳情</h1>
+<div id="app" data-order-id="<%= orderId %>" data-payment-result="<%= paymentResult %>" class="fade-in">
 
-  <div v-if="loading" class="flex justify-center py-24">
-    <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+  <!-- Page header -->
+  <div style="background:var(--color-ivory); border-bottom:1px solid var(--color-mist); padding:2.5rem 0 2rem;">
+    <div class="af-container">
+      <span class="af-section-label">Member Area</span>
+      <h1 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,2.8rem); color:var(--color-text-dark); font-weight:400; margin:0;">訂單詳情</h1>
+    </div>
   </div>
 
-  <template v-else-if="order">
-    <!-- Payment Result Alert -->
-    <div
-      v-if="paymentResult && paymentMessages[paymentResult]"
-      class="rounded-none p-4 mb-8 text-xs font-semibold tracking-wider text-center border"
-      :class="paymentMessages[paymentResult].cls"
-    >
-      {{ paymentMessages[paymentResult].text }}
-    </div>
+  <div style="background:var(--color-cream); padding:clamp(2.5rem,5vw,4rem) 0; min-height:50vh;">
+    <div class="af-container">
+      <div style="display:grid; grid-template-columns:220px 1fr; gap:3rem; align-items:start;">
 
-    <!-- Order Info -->
-    <div class="bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 mb-6 shadow-[0_4px_25px_rgba(156,74,90,0.01)]">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <!-- Sidebar (same as orders.ejs) -->
+        <aside style="position:sticky; top:88px;">
+          <div style="background:#fff; border:1px solid var(--color-mist); overflow:hidden;">
+            <div style="background:var(--color-forest); padding:1.5rem 1.25rem;">
+              <p style="font-family:var(--font-display); font-style:italic; font-size:1.1rem; color:var(--color-text-on-dark); margin-bottom:0.2rem;">會員中心</p>
+              <p style="font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(200,217,205,0.65);">Member Center</p>
+            </div>
+            <nav style="padding:0.5rem 0;">
+              <a href="#" style="display:flex; align-items:center; padding:0.75rem 1.25rem; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500; color:var(--color-text-light); text-decoration:none; transition:background 0.2s, color 0.2s;"
+                onmouseover="this.style.background='var(--color-ivory)'; this.style.color='var(--color-forest)'"
+                onmouseout="this.style.background=''; this.style.color='var(--color-text-light)'"
+              >個人資料</a>
+              <a href="/orders" style="display:flex; align-items:center; padding:0.75rem 1.25rem; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500; color:var(--color-forest); text-decoration:none; background:var(--color-forest-pale); border-left:2px solid var(--color-forest);">訂單管理</a>
+              <a href="#" style="display:flex; align-items:center; padding:0.75rem 1.25rem; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500; color:var(--color-text-light); text-decoration:none; transition:background 0.2s, color 0.2s;"
+                onmouseover="this.style.background='var(--color-ivory)'; this.style.color='var(--color-forest)'"
+                onmouseout="this.style.background=''; this.style.color='var(--color-text-light)'"
+              >收件地址</a>
+              <a href="#" style="display:flex; align-items:center; padding:0.75rem 1.25rem; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500; color:var(--color-text-light); text-decoration:none; transition:background 0.2s, color 0.2s;"
+                onmouseover="this.style.background='var(--color-ivory)'; this.style.color='var(--color-forest)'"
+                onmouseout="this.style.background=''; this.style.color='var(--color-text-light)'"
+              >帳號安全</a>
+            </nav>
+            <div style="border-top:1px solid var(--color-mist); padding:1.25rem; background:var(--color-ivory);">
+              <p style="font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--color-forest-mid); margin-bottom:0.3rem; font-weight:500;">花藝積點</p>
+              <p style="font-family:var(--font-display); font-size:1.6rem; color:var(--color-forest); line-height:1;">1,240
+                <span style="font-size:0.65rem; font-family:var(--font-body); letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); margin-left:2px;">pts</span>
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main content -->
         <div>
-          <p class="text-xs font-semibold text-text-secondary tracking-wider">訂單編號：{{ order.order_no }}</p>
-          <p class="text-[10px] text-text-muted mt-1">建立日期：{{ new Date(order.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
+          <!-- Loading -->
+          <div v-if="loading" style="display:flex; justify-content:center; padding:4rem 0;">
+            <div class="af-spinner"></div>
+          </div>
+
+          <template v-else-if="order">
+            <!-- Back link -->
+            <div style="margin-bottom:1.5rem;">
+              <a href="/orders" style="font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-forest-mid); text-decoration:none; transition:opacity 0.2s;"
+                onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
+                ← 返回訂單列表
+              </a>
+            </div>
+
+            <!-- Payment result alert -->
+            <div
+              v-if="paymentResult && paymentMessages[paymentResult]"
+              style="padding:1rem 1.5rem; margin-bottom:1.5rem; font-size:0.82rem; font-weight:500; letter-spacing:0.06em; text-align:center; border:1px solid currentColor;"
+              :class="paymentMessages[paymentResult].cls"
+            >
+              {{ paymentMessages[paymentResult].text }}
+            </div>
+
+            <!-- Order info card -->
+            <div style="background:#fff; border:1px solid var(--color-mist); padding:1.75rem; margin-bottom:1.25rem;">
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+                <div>
+                  <p style="font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-mid); font-weight:500; margin-bottom:0.35rem;">訂單編號</p>
+                  <p style="font-family:var(--font-display); font-size:1.25rem; color:var(--color-text-dark);">{{ order.order_no }}</p>
+                  <p style="font-size:0.75rem; color:var(--color-text-light); margin-top:0.25rem;">
+                    {{ new Date(order.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) }}
+                  </p>
+                </div>
+                <span
+                  style="font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:500; padding:0.35rem 1rem; border:1px solid currentColor;"
+                  :class="statusMap[order.status]?.cls || 'status-pending'"
+                >
+                  {{ statusMap[order.status]?.label || order.status }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Recipient info -->
+            <div style="background:#fff; border:1px solid var(--color-mist); padding:1.75rem; margin-bottom:1.25rem;">
+              <h2 style="font-family:var(--font-display); font-size:1.1rem; color:var(--color-text-dark); font-weight:400; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid var(--color-mist);">收件資訊</h2>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+                <div>
+                  <p style="font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); font-weight:500; margin-bottom:0.3rem;">收件人</p>
+                  <p style="font-size:0.88rem; color:var(--color-text-dark);">{{ order.recipient_name }}</p>
+                </div>
+                <div>
+                  <p style="font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); font-weight:500; margin-bottom:0.3rem;">Email</p>
+                  <p style="font-size:0.88rem; color:var(--color-text-dark); word-break:break-all;">{{ order.recipient_email }}</p>
+                </div>
+                <div>
+                  <p style="font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); font-weight:500; margin-bottom:0.3rem;">地址</p>
+                  <p style="font-size:0.88rem; color:var(--color-text-dark);">{{ order.recipient_address }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order items table -->
+            <div style="background:#fff; border:1px solid var(--color-mist); padding:1.75rem; margin-bottom:1.25rem;">
+              <h2 style="font-family:var(--font-display); font-size:1.1rem; color:var(--color-text-dark); font-weight:400; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid var(--color-mist);">商品明細</h2>
+              <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--color-mist);">
+                    <th style="text-align:left; padding:0.5rem 0; font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); font-weight:500;">商品名稱</th>
+                    <th style="text-align:right; padding:0.5rem 0; font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); font-weight:500;">單價</th>
+                    <th style="text-align:right; padding:0.5rem 0; font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); font-weight:500;">數量</th>
+                    <th style="text-align:right; padding:0.5rem 0; font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); font-weight:500;">小計</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in order.items" :key="item.id" style="border-bottom:1px solid var(--color-mist);">
+                    <td style="padding:1rem 0; font-size:0.88rem; color:var(--color-text-dark); font-weight:500;">{{ item.product_name }}</td>
+                    <td style="padding:1rem 0; text-align:right; font-size:0.85rem; color:var(--color-text-mid);">NT$&thinsp;{{ item.product_price.toLocaleString() }}</td>
+                    <td style="padding:1rem 0; text-align:right; font-size:0.85rem; color:var(--color-text-mid);">{{ item.quantity }}</td>
+                    <td style="padding:1rem 0; text-align:right; font-size:0.88rem; color:var(--color-text-dark); font-weight:500;">NT$&thinsp;{{ (item.product_price * item.quantity).toLocaleString() }}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" style="padding-top:1.25rem; text-align:right; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-text-light); font-weight:500; padding-right:1rem;">合計</td>
+                    <td style="padding-top:1.25rem; text-align:right;">
+                      <span style="font-family:var(--font-display); font-size:1.4rem; color:var(--color-coral);">NT$&thinsp;{{ order.total_amount.toLocaleString() }}</span>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Payment actions -->
+            <div v-if="order.status === 'pending'" style="display:flex; gap:1rem; flex-wrap:wrap;">
+              <button
+                @click="checkPayment"
+                :disabled="paying"
+                class="btn-outline"
+                style="padding:0.8rem 2rem; flex:1; text-align:center; min-width:140px;"
+              >
+                {{ paying ? '查詢中…' : '查詢付款狀態' }}
+              </button>
+              <a
+                :href="'/ecpay/payment/' + order.id"
+                class="btn-primary"
+                style="padding:0.8rem 2rem; flex:1; text-align:center; min-width:140px;"
+              >
+                前往付款
+              </a>
+            </div>
+          </template>
         </div>
-        <span
-          class="text-[10px] tracking-wider font-semibold px-4 py-1.5 rounded-none uppercase border border-current"
-          :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600'"
-        >
-          {{ statusMap[order.status]?.label || order.status }}
-        </span>
+
       </div>
     </div>
-
-    <!-- Recipient Info -->
-    <div class="bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 mb-6 shadow-[0_4px_25px_rgba(156,74,90,0.01)]">
-      <h2 class="text-base font-semibold text-text-primary mb-4 pb-2 border-b border-rose-bg/30">收件資訊</h2>
-      <div class="text-xs space-y-2.5 text-text-secondary leading-relaxed">
-        <p>收件人：{{ order.recipient_name }}</p>
-        <p>Email：{{ order.recipient_email }}</p>
-        <p>地址：{{ order.recipient_address }}</p>
-      </div>
-    </div>
-
-    <!-- Order Items -->
-    <div class="bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 mb-6 shadow-[0_4px_25px_rgba(156,74,90,0.01)]">
-      <h2 class="text-base font-semibold text-text-primary mb-4 pb-2 border-b border-rose-bg/30">商品明細</h2>
-      <table class="w-full text-xs">
-        <thead>
-          <tr class="border-b border-rose-bg/40 text-text-muted">
-            <th class="text-left py-2 font-semibold">商品名稱</th>
-            <th class="text-right py-2 font-semibold">單價</th>
-            <th class="text-right py-2 font-semibold">數量</th>
-            <th class="text-right py-2 font-semibold">小計</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in order.items" :key="item.id" class="border-b border-rose-bg/20">
-            <td class="py-3.5 text-text-primary font-medium">{{ item.product_name }}</td>
-            <td class="py-3.5 text-right text-text-secondary">NT$ {{ item.product_price.toLocaleString() }}</td>
-            <td class="py-3.5 text-right text-text-secondary">{{ item.quantity }}</td>
-            <td class="py-3.5 text-right text-text-primary font-bold">NT$ {{ (item.product_price * item.quantity).toLocaleString() }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3" class="pt-4 text-right font-medium text-text-primary">總計</td>
-            <td class="pt-4 text-right font-bold text-rose-primary text-base">NT$ {{ order.total_amount.toLocaleString() }}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-    <!-- Payment Actions -->
-    <div v-if="order.status === 'pending'" class="flex gap-4">
-      <button
-        @click="checkPayment"
-        :disabled="paying"
-        class="premium-btn flex-1 sm:flex-none bg-sage text-white px-8 py-3 rounded-none text-xs font-semibold tracking-wider hover:bg-sage/90 transition-all disabled:opacity-40 shadow-sm"
-      >
-        {{ paying ? '查詢中...' : '查詢付款狀態' }}
-      </button>
-      <a
-        :href="'/ecpay/payment/' + order.id"
-        class="premium-btn flex-1 sm:flex-none bg-rose-primary text-white px-8 py-3 rounded-none text-xs font-semibold tracking-wider hover:bg-rose-dark transition-all text-center shadow-sm"
-      >
-        前往付款
-      </a>
-    </div>
-  </template>
+  </div>
 </div>

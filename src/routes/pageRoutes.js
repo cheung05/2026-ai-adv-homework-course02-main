@@ -67,7 +67,13 @@ router.get('/ecpay/payment/:orderId', function (req, res) {
     return res.redirect('/orders/' + order.id);
   }
   const items = db.prepare('SELECT product_name, product_price, quantity FROM order_items WHERE order_id = ?').all(order.id);
-  const html = buildAioFormHtml(order, items);
+  
+  // Resolve base URL dynamically from the request headers to support dynamic port/host
+  const host = req.get('host');
+  const protocol = req.protocol;
+  const dynamicBaseUrl = `${protocol}://${host}`;
+
+  const html = buildAioFormHtml(order, items, { merchantBaseUrl: dynamicBaseUrl });
   res.type('text/html').send(html);
 });
 

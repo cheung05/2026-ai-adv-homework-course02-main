@@ -1,40 +1,135 @@
-<div id="app" class="fade-in py-6">
-  <h1 class="text-3xl font-light text-text-primary mb-8 font-serif">我的訂單</h1>
+<div id="app" class="fade-in">
 
-  <div v-if="loading" class="flex justify-center py-24">
-    <div class="w-8 h-8 border-3 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
+  <!-- Page header -->
+  <div style="background:var(--color-ivory); border-bottom:1px solid var(--color-mist); padding:2.5rem 0 2rem;">
+    <div class="af-container">
+      <span class="af-section-label">Member Area</span>
+      <h1 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,2.8rem); color:var(--color-text-dark); font-weight:400; margin:0;">我的訂單</h1>
+    </div>
   </div>
 
-  <div v-else-if="orders.length === 0" class="text-center py-20 bg-white/40 rounded-none border border-dashed border-rose-bg/30">
-    <div class="text-5xl mb-4">📦</div>
-    <p class="text-text-secondary text-sm mb-2">您目前尚無任何訂單</p>
-    <p class="text-text-muted text-xs mb-6">快去選購喜歡的花束吧！</p>
-    <a href="/" class="premium-btn inline-block bg-rose-primary text-white px-8 py-3 rounded-none text-xs font-semibold tracking-widest uppercase hover:bg-rose-dark transition-all">去逛逛</a>
-  </div>
+  <div style="background:var(--color-cream); padding:clamp(2.5rem,5vw,4rem) 0; min-height:50vh;">
+    <div class="af-container">
+      <div style="display:grid; grid-template-columns:220px 1fr; gap:3rem; align-items:start;">
 
-  <div v-else class="space-y-6">
-    <a
-      v-for="order in orders"
-      :key="order.id"
-      :href="'/orders/' + order.id"
-      class="block bg-white/40 backdrop-blur-sm rounded-none border border-rose-bg/30 p-6 premium-card cursor-pointer"
-    >
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <!-- Sidebar -->
+        <aside style="position:sticky; top:88px;">
+          <div style="background:#fff; border:1px solid var(--color-mist); overflow:hidden;">
+            <div style="background:var(--color-forest); padding:1.5rem 1.25rem;">
+              <p style="font-family:var(--font-display); font-style:italic; font-size:1.1rem; color:var(--color-text-on-dark); margin-bottom:0.2rem;">會員中心</p>
+              <p style="font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(200,217,205,0.65);">Member Center</p>
+            </div>
+            <nav style="padding:0.5rem 0;">
+              <a href="#" style="
+                display:flex; align-items:center; padding:0.75rem 1.25rem;
+                font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500;
+                color:var(--color-text-light); text-decoration:none;
+                transition:background 0.2s, color 0.2s;
+              "
+                onmouseover="this.style.background='var(--color-ivory)'; this.style.color='var(--color-forest)'"
+                onmouseout="this.style.background=''; this.style.color='var(--color-text-light)'"
+              >個人資料</a>
+              <a href="/orders" style="
+                display:flex; align-items:center; padding:0.75rem 1.25rem;
+                font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500;
+                color:var(--color-forest); text-decoration:none;
+                background:var(--color-forest-pale);
+                border-left:2px solid var(--color-forest);
+              ">訂單管理</a>
+              <a href="#" style="
+                display:flex; align-items:center; padding:0.75rem 1.25rem;
+                font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500;
+                color:var(--color-text-light); text-decoration:none;
+                transition:background 0.2s, color 0.2s;
+              "
+                onmouseover="this.style.background='var(--color-ivory)'; this.style.color='var(--color-forest)'"
+                onmouseout="this.style.background=''; this.style.color='var(--color-text-light)'"
+              >收件地址</a>
+              <a href="#" style="
+                display:flex; align-items:center; padding:0.75rem 1.25rem;
+                font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:500;
+                color:var(--color-text-light); text-decoration:none;
+                transition:background 0.2s, color 0.2s;
+              "
+                onmouseover="this.style.background='var(--color-ivory)'; this.style.color='var(--color-forest)'"
+                onmouseout="this.style.background=''; this.style.color='var(--color-text-light)'"
+              >帳號安全</a>
+            </nav>
+            <!-- Points -->
+            <div style="border-top:1px solid var(--color-mist); padding:1.25rem; background:var(--color-ivory);">
+              <p style="font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--color-forest-mid); margin-bottom:0.3rem; font-weight:500;">花藝積點</p>
+              <p style="font-family:var(--font-display); font-size:1.6rem; color:var(--color-forest); line-height:1;">1,240
+                <span style="font-size:0.65rem; font-family:var(--font-body); letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-light); margin-left:2px;">pts</span>
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Orders list -->
         <div>
-          <p class="text-xs font-semibold text-text-secondary tracking-widest uppercase">訂單編號：{{ order.order_no }}</p>
-          <p class="text-[10px] text-text-muted mt-1">{{ new Date(order.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
+          <!-- Loading -->
+          <div v-if="loading" style="display:flex; justify-content:center; padding:4rem 0;">
+            <div class="af-spinner"></div>
+          </div>
+
+          <!-- Empty -->
+          <div v-else-if="orders.length === 0" style="
+            text-align:center; padding:4rem 2rem;
+            border:1.5px dashed var(--color-mist); background:var(--color-ivory);
+          ">
+            <div style="font-size:2.5rem; margin-bottom:1rem; opacity:0.2;">📦</div>
+            <p style="font-size:0.9rem; color:var(--color-text-light); margin-bottom:0.4rem;">您目前尚無任何訂單</p>
+            <p style="font-size:0.78rem; color:var(--color-text-light); opacity:0.6; margin-bottom:1.75rem;">快去選購喜歡的花束吧！</p>
+            <a href="/" class="btn-primary">去逛逛</a>
+          </div>
+
+          <!-- Orders -->
+          <div v-else style="display:flex; flex-direction:column; gap:1px; background:var(--color-mist); border:1px solid var(--color-mist); overflow:hidden;">
+            <a
+              v-for="order in orders"
+              :key="order.id"
+              :href="'/orders/' + order.id"
+              style="
+                display:grid;
+                grid-template-columns:1fr auto auto;
+                align-items:center;
+                gap:1.5rem;
+                padding:1.5rem;
+                background:#fff;
+                text-decoration:none;
+                transition:background 0.2s;
+              "
+              onmouseover="this.style.background='var(--color-ivory)'"
+              onmouseout="this.style.background='#fff'"
+            >
+              <div>
+                <p style="font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-text-mid); font-weight:500; margin-bottom:0.3rem;">
+                  訂單 {{ order.order_no }}
+                </p>
+                <p style="font-size:0.75rem; color:var(--color-text-light);">
+                  {{ new Date(order.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) }}
+                </p>
+              </div>
+              <div style="text-align:right;">
+                <p style="font-family:var(--font-display); font-size:1.2rem; color:var(--color-text-dark); line-height:1;">NT$&thinsp;{{ order.total_amount.toLocaleString() }}</p>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.75rem;">
+                <span
+                  style="
+                    font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:500;
+                    padding:0.3rem 0.85rem; border:1px solid currentColor;
+                  "
+                  :class="statusMap[order.status]?.cls || 'status-pending'"
+                >
+                  {{ statusMap[order.status]?.label || order.status }}
+                </span>
+                <span style="color:var(--color-forest-mid); font-size:0.9rem;">→</span>
+              </div>
+            </a>
+          </div>
         </div>
-        <div class="flex items-center justify-between sm:justify-end gap-6">
-          <span class="font-bold text-text-primary text-base font-serif">NT$ {{ order.total_amount.toLocaleString() }}</span>
-          <span
-            class="text-[10px] tracking-widest font-semibold px-4 py-1.5 rounded-none uppercase border border-current"
-            :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600 border-gray-200'"
-          >
-            {{ statusMap[order.status]?.label || order.status }}
-          </span>
-          <span class="text-rose-primary text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
-        </div>
+
       </div>
-    </a>
+    </div>
   </div>
 </div>

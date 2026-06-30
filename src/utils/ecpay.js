@@ -100,8 +100,15 @@ function buildItemName(items) {
 }
 
 function buildAioFormHtml(order, items, config) {
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3001';
-  const cfg = config || ECPAY_CONFIG;
+  const cfg = { ...ECPAY_CONFIG, ...config };
+  let baseUrl = process.env.BASE_URL || 'http://localhost:3001';
+
+  // If the baseUrl is localhost/127.0.0.1, and we have a dynamic merchantBaseUrl from the request, use it to ensure correct port/host
+  if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')) {
+    if (cfg.merchantBaseUrl) {
+      baseUrl = cfg.merchantBaseUrl;
+    }
+  }
 
   const params = {
     MerchantID: cfg.merchantId,
